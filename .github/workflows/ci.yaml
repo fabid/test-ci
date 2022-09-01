@@ -1,0 +1,31 @@
+name: deploy-dev
+
+# Trigger Rule: Trigger when push to main or PR to main.
+on:
+  - workflow_dispatch
+  - push
+
+
+jobs:
+  deploy_dev:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+        node-version: [16.x]
+
+    steps:
+      # Checkout repository under $GITHUB_WORKSPACE, so our jobs can access it.
+      - uses: actions/checkout@v3
+
+      # Steps of deploy_dev
+      - name: Set Up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: deps
+        run: pip install black
+
+      - name: lint
+        run: python -m black . --check
